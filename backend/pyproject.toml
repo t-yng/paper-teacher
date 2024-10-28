@@ -1,0 +1,21 @@
+[tool.poetry]
+name = "paper-teacher"
+version = "0.1.0"
+description = ""
+authors = ["t-yng <t.yng.greenmonkey@gmail.com>"]
+# readme = "README.md"
+packages = [
+    { include = "app" },
+]
+
+[tool.poetry.dependencies]
+python = "^3.12"
+pymupdf4llm = "^0.0.17"
+markdown = "^3.7"
+beautifulsoup4 = "^4.12.3"
+html2text = "^2024.2.26"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
