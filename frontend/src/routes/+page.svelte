@@ -52,7 +52,7 @@
 		</div>
 		<GradientButton type="submit" color="purpleToBlue" class="mx-auto block">
 			{#if summarizing}
-				<Spinner class="me-3" size="4" color="white" />Summarizing ...
+				<Spinner class="me-3" size="4" color="white" />Uploading ...
 			{:else}Summarize{/if}
 		</GradientButton>
 	</form>
