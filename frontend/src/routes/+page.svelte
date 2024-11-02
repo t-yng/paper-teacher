@@ -2,6 +2,7 @@
 	import { goto } from '$app/navigation';
 	import FileInput from '$lib/components/FileInput.svelte';
 	import { Select, Label, GradientButton, Spinner } from 'flowbite-svelte';
+	import { paperStore } from '$lib/stores/paper';
 
 	let selectedLanguage = 'japanese';
 	let summarizing = false;
@@ -16,14 +17,24 @@
 		}
 	];
 
-	const requestSummarize = () => {
+	const requestSummarize = async (file: File) => {
 		summarizing = true;
-		// TODO: PDFからサマリを生成するAPIリクエストを送信
-		return new Promise<void>((resolve, reject) => {
-			setTimeout(() => {
-				resolve();
-			}, 2000);
-		});
+		const formData = new FormData();
+		formData.append('file', file);
+
+		try {
+			const response = await fetch('http://localhost:8000/papers/extract', {
+				method: 'POST',
+				body: formData
+			});
+			const data = await response.json();
+			return data;
+		} catch (error) {
+			console.error('Failed extract data from pdf', error);
+			throw error;
+		} finally {
+			summarizing = false;
+		}
 	};
 
 	const handleSubmit = async (event: SubmitEvent) => {
@@ -31,9 +42,17 @@
 		const form = event.target as HTMLFormElement;
 		// TODO: アップロードされたPDFを取得
 		const formData = new FormData(form);
+		const file = formData.get('paper') as File;
 
-		await requestSummarize();
-		goto('/summarize');
+		try {
+			const paper = await requestSummarize(file);
+			paperStore.set(paper);
+			goto('/summarize');
+		} catch (error) {
+			console.error('Failed to summarize', error);
+			alert('Failed to summarize. Please try again after.');
+			return;
+		}
 	};
 </script>
 
@@ -44,7 +63,7 @@
 	>
 		<!-- Upload paper -->
 		<div class="w-[500px]">
-			<FileInput />
+			<FileInput name="paper" />
 		</div>
 		<div class="self-start">
 			<Label for="output-language" class="mb-2">Output Language</Label>

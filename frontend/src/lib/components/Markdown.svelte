@@ -2,10 +2,10 @@
 	import 'github-markdown-css/github-markdown-light.css';
 	import markdownit from 'markdown-it';
 
-	export let body: string;
+	let { body = $bindable() }: { body: string } = $props();
 
 	const md = markdownit();
-	const bodyHtml = md.render(body);
+	const bodyHtml = $derived(md.render(body));
 </script>
 
 <article class="markdown-body">
