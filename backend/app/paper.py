@@ -1,4 +1,4 @@
-from dataclasses import dataclass
+from dataclasses import asdict, dataclass
 from typing import List
 import markdown
 from bs4 import BeautifulSoup, Tag
@@ -20,6 +20,12 @@ class Paper:
     def __init__(self, title: str, sections: List[Section]):
         self.title = title
         self.sections = sections
+
+    def to_dict(self) -> dict:
+        return {
+            "title": self.title,
+            "sections": [asdict(section) for section in self.sections],
+        }
 
 
 def load_paper(file_path: str) -> Paper:
