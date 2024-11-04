@@ -17,7 +17,7 @@
 		}
 	];
 
-	const requestSummarize = async (file: File) => {
+	const uploadPaperPdf = async (file: File) => {
 		summarizing = true;
 		const formData = new FormData();
 		formData.append('file', file);
@@ -45,7 +45,7 @@
 		const file = formData.get('paper') as File;
 
 		try {
-			const paper = await requestSummarize(file);
+			const paper = await uploadPaperPdf(file);
 			paperStore.set(paper);
 			goto('/summarize');
 		} catch (error) {
@@ -56,7 +56,7 @@
 	};
 </script>
 
-<main class="flex h-full flex-col items-center justify-center">
+<main class="pt- flex h-full flex-col items-center justify-center pt-24">
 	<form
 		class="flex max-w-[800px] flex-col items-center justify-center gap-4"
 		on:submit={handleSubmit}

@@ -1,5 +1,6 @@
 from dataclasses import asdict, dataclass
 from typing import List
+import uuid
 import markdown
 from bs4 import BeautifulSoup, Tag
 import html2text
@@ -11,6 +12,8 @@ import pymupdf4llm
 class Section:
     """PDFページのセクション"""
 
+    id: str
+    order: int
     heading: str
     level: int
     body: str
@@ -123,7 +126,13 @@ def _extract_markdown_sections(markdown_text: str) -> List[Section]:
         body_markdown = h2t.handle(content_html).strip()
 
         # セクションを作成
-        section = Section(heading=heading_text, level=level, body=body_markdown)
+        section = Section(
+            id=str(uuid.uuid4()),
+            order=i + 1,
+            heading=heading_text,
+            level=level,
+            body=body_markdown,
+        )
         sections.append(section)
 
     return sections
