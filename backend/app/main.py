@@ -1,8 +1,12 @@
 import os
+from typing import List
+from app.llm.summarize.model import SummarizeLlm
 from app.paper import load_paper
 from fastapi import FastAPI, File, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
+
+from pydantic import BaseModel
 
 app = FastAPI()
 
@@ -16,12 +20,13 @@ app.add_middleware(
 )
 
 
-@app.get("/")
-def read_root():
-    return {"message": "Hello, World!"}
+class SummarizeSectionRequest(BaseModel):
+    language: str
+    title: str
+    section: str
+    summarized_sections: List[str]
 
 
-# POST /paper/extract
 @app.post("/papers/extract")
 async def extract_sections(file: UploadFile = File(None)):
     if file is None:
@@ -41,4 +46,13 @@ async def extract_sections(file: UploadFile = File(None)):
     return paper.to_dict()
 
 
-# POST /paper/sections/summarize
+@app.post("/paper/sections/summarize")
+def summarize_section(body: SummarizeSectionRequest):
+    llm = SummarizeLlm(language=body.language)
+    summary = llm.summarize_section(
+        title=body.title,
+        section=body.section,
+        summarized_sections=body.summarized_sections,
+    )
+
+    return {"summary": summary}
